@@ -1,0 +1,25 @@
+heat_template_version: 2014-10-16
+description: Listener for ELB
+resources:
+  listener_1:
+    type: OSE::ELB::Listener
+    properties:
+      name: listener-web
+      loadbalancer_id: 8314c62b0a9b433a8c98715e2e006a59
+      protocol: HTTP
+      backend_protocol: HTTP
+      port: 80
+      backend_port: 80
+      lb_algorithm: roundrobin
+  healthcheck_1:
+    type: OSE::ELB::HealthCheck
+    depends_on: listener_1
+    properties:
+      listener_id: { get_resource: listener_1 }
+      healthcheck_connect_port: 80
+      healthcheck_interval: 5
+      healthcheck_protocol: HTTP
+      healthcheck_timeout: 10
+      healthcheck_uri: /
+      healthy_threshold: 3
+      unhealthy_threshold: 3
