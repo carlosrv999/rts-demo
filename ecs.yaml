@@ -1,0 +1,13 @@
+heat_template_version: 2014-10-16
+description: Create a simple ECS instance.
+resources:
+  nova_server:
+    type: OS::Nova::Server
+    properties:
+      name: ecs-carlos1
+      image: b942754b-d388-44b0-b62f-e18a25643c69
+      flavor: s1.medium
+      key_name: KeyPair-carlos
+      networks:
+        - network: f9cc5655-fb17-4256-bc35-da57e89a4f82
+      availability_zone: sa-peru-1b
