@@ -23,3 +23,39 @@ resources:
       healthcheck_uri: /
       healthy_threshold: 3
       unhealthy_threshold: 3
+  scalingconfig_1:
+    type: OSE::AS::ScalingConfig
+    properties:
+      scaling_configuration_name: as-config-web
+      instance_config:
+        key_name: KeyPair-carlos
+        flavorRef: s3.medium.4
+        imageRef: 12a948aa-fa14-4abb-96b6-0d0f0ae778a1
+        disk:
+          - disk_type: SYS
+            size: 140
+            volume_type: SSD
+  scalinggroup_1:
+    type: OSE::AS::ScalingGroup
+    depends_on:
+      - listener_1
+      - scalingconfig_1
+    properties:
+      scaling_group_name: as-group-web
+      scaling_configuration_id: { get_resource: scalingconfig_1 }
+      desire_instance_number: 1
+      min_instance_number: 1
+      max_instance_number: 2
+      cool_down_time: 900
+      lb_listener_id: { get_resource: listener_1 }
+      available_zones:
+        - sa-peru-1a
+      networks:
+        - id: f9cc5655-fb17-4256-bc35-da57e89a4f82
+      security_groups:
+        - id: 33959d6d-39ed-48df-8fc8-4622ea4c1db8
+      vpc_id: e81e0928-955b-4fd5-857d-9e79643d0f0b
+      health_periodic_audit_method: ELB_AUDIT
+      health_periodic_audit_time: 5
+      instance_terminate_policy: OLD_CONFIG_OLD_INSTANCE
+      delete_publicip: true
